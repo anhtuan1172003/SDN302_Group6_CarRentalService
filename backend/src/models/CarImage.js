@@ -7,10 +7,10 @@ const carImageSchema = new mongoose.Schema(
       ref: "Car",
       required: true,
     },
-    file_path: {
+    file_path: [{
       type: String,
       required: true,
-    },
+    }],
   },
   {
     timestamps: true,

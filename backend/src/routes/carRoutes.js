@@ -1,6 +1,7 @@
 const express = require("express")
 const {
-  getCars,
+  getApprovedCars,
+  getAllCars,
   getCarById,
   createCar,
   updateCar,
@@ -9,32 +10,22 @@ const {
   uploadCarDocuments,
 } = require("../controllers/carController")
 const { protect, admin } = require("../middleware/auth")
-const multer = require("multer")
 
 const router = express.Router()
 
-// Configure multer for file uploads
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "uploads/")
-  },
-  filename: (req, file, cb) => {
-    cb(null, `${Date.now()}-${file.originalname}`)
-  },
-})
-
-const upload = multer({ storage })
-
 // Public routes
-router.get("/", getCars)
-router.get("/:id", getCarById)
+router.get("/", getApprovedCars)
 
-// Protected routes
-router.post("/", protect, admin, createCar)
-router.put("/:id", protect, admin, updateCar)
+// Admin routes
+router.get("/admin", protect, admin, getAllCars)
+router.post("/", protect, createCar)
+
+// Route 
+router.get("/:id", getCarById)
+router.put("/:id", protect, updateCar)
 router.delete("/:id", protect, admin, deleteCar)
-router.post("/:id/images", protect, admin, upload.array("images", 10), uploadCarImages)
-router.post("/:id/documents", protect, admin, upload.array("documents", 5), uploadCarDocuments)
+router.post("/:id/images", protect, uploadCarImages)
+router.post("/:id/documents", protect, uploadCarDocuments)
 
 module.exports = router
 

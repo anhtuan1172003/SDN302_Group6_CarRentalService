@@ -31,6 +31,11 @@ const carSchema = new mongoose.Schema(
       enum: ["available", "booked", "maintenance", "unavailable"],
       default: "available",
     },
+    car_approved: {
+      type: String,
+      enum: ["yes", "no"],
+      default: "no",
+    },
     color: {
       type: String,
       required: true,

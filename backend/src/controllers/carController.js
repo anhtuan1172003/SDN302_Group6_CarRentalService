@@ -2,10 +2,22 @@ const Car = require("../models/Car")
 const CarImage = require("../models/CarImage")
 const CarDocument = require("../models/CarDocument")
 
-// @desc    Get all cars
+// @desc    Get all approved cars
 // @route   GET /api/cars
 // @access  Public
-const getCars = async (req, res) => {
+const getApprovedCars = async (req, res) => {
+  try {
+    const cars = await Car.find({ car_approved: "yes" })
+    res.json(cars)
+  } catch (error) {
+    res.status(500).json({ message: error.message })
+  }
+}
+
+// @desc    Get all cars (including unapproved)
+// @route   GET /api/cars/admin
+// @access  Private/Admin
+const getAllCars = async (req, res) => {
   try {
     const cars = await Car.find({})
     res.json(cars)
@@ -66,6 +78,10 @@ const updateCar = async (req, res) => {
     const car = await Car.findById(req.params.id)
 
     if (car) {
+      // Luôn đặt car_approved thành "no" khi có bất kỳ cập nhật nào
+      req.body.car_approved = "no"
+
+      // Cập nhật các trường của xe
       Object.keys(req.body).forEach((key) => {
         car[key] = req.body[key]
       })
@@ -174,7 +190,8 @@ const uploadCarDocuments = async (req, res) => {
 }
 
 module.exports = {
-  getCars,
+  getApprovedCars,
+  getAllCars,
   getCarById,
   createCar,
   updateCar,
@@ -182,6 +199,8 @@ module.exports = {
   uploadCarImages,
   uploadCarDocuments,
 }
+
+
 
 console.log("Car controller created successfully with CommonJS syntax!")
 

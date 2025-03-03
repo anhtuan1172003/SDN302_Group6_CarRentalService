@@ -1,23 +1,30 @@
-import logo from './logo.svg';
-import './App.css';
+import { Container, Row } from "react-bootstrap";
+import "./App.scss";
+import Header from "./components/Header/Header";
+import { Outlet } from "react-router-dom";
+import Footer from "./components/Footer/Footer";
+import Logo from "../src/assets/logo51.png";
+import { Helmet } from "react-helmet";
+import "react-toastify/dist/ReactToastify.css";
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div fluid="lg" className="app-container">
+      <Helmet>
+        <title>Carental</title>
+      </Helmet>
+      <div className="header-container">
+        <Header />
+      </div>
+      {/* <hr className="hr"></hr> */}
+      <div className="main-container">
+        <div className="sidenav-container"></div>
+        <div className="app-content">
+          <Outlet />
+        </div>
+      </div>
+      <hr className="hr"></hr>
+      <Footer />
     </div>
   );
 }
