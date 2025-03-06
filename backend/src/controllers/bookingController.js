@@ -42,14 +42,14 @@ const createBooking = async (req, res) => {
       total_amount,
       deposit: car.deposit,
       payment_method,
-      drivers_information: drivers_information || "",
+      drivers_information: req.user.name || "",
     })
 
     const createdBooking = await booking.save()
 
     // Update car status
-    car.car_status = "booked"
-    await car.save()
+    // car.car_status = "booked"
+    // await car.save()
 
     res.status(201).json(createdBooking)
   } catch (error) {
