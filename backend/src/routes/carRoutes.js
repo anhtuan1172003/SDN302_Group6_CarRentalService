@@ -6,8 +6,6 @@ const {
   createCar,
   updateCar,
   deleteCar,
-  uploadCarImages,
-  uploadCarDocuments,
 } = require("../controllers/carController")
 const { protect, admin } = require("../middleware/auth")
 
@@ -24,8 +22,7 @@ router.post("/", protect, createCar)
 router.get("/:id", getCarById)
 router.put("/:id", protect, updateCar)
 router.delete("/:id", protect, admin, deleteCar)
-router.post("/:id/images", protect, uploadCarImages)
-router.post("/:id/documents", protect, uploadCarDocuments)
+
 
 module.exports = router
 

@@ -80,6 +80,14 @@ const carSchema = new mongoose.Schema(
     additional_functions: {
       type: String,
     },
+    image_url: [{
+      type: String,
+      required: true,
+    }],
+    document_url: [{
+      type: String,
+      required: true,
+    }],
     user_id: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
