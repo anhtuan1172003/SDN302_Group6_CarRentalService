@@ -112,6 +112,32 @@ const deleteCar = async (req, res) => {
   }
 }
 
+// @desc    Update car approval status
+// @route   PUT /api/cars/:id/approve
+// @access  Private/Admin
+const updateCarApproval = async (req, res) => {
+  try {
+    const { car_approved } = req.body
+
+    if (!["yes", "no"].includes(car_approved)) {
+      return res.status(400).json({ message: "Invalid approval status" })
+    }
+
+    const car = await Car.findById(req.params.id)
+
+    if (car) {
+      car.car_approved = car_approved
+
+      const updatedCar = await car.save()
+      res.json(updatedCar)
+    } else {
+      res.status(404).json({ message: "Car not found" })
+    }
+  } catch (error) {
+    res.status(500).json({ message: error.message })
+  }
+}
+
 module.exports = {
   getApprovedCars,
   getAllCars,
@@ -119,7 +145,7 @@ module.exports = {
   createCar,
   updateCar,
   deleteCar,
-
+  updateCarApproval
 }
 
 console.log("Car controller created successfully with CommonJS syntax!")
