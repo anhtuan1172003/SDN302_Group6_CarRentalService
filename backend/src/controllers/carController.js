@@ -1,6 +1,5 @@
 const Car = require("../models/Car")
 
-
 // @desc    Get all approved cars
 // @route   GET /api/cars
 // @access  Public
@@ -35,6 +34,22 @@ const getCarById = async (req, res) => {
       res.json(car)
     } else {
       res.status(404).json({ message: "Car not found" })
+    }
+  } catch (error) {
+    res.status(500).json({ message: error.message })
+  }
+}
+
+// @desc    Get all cars by owner (user)
+// @route   GET /api/cars/owner/:userId
+// @access  Private
+const getCarsByOwner = async (req, res) => {
+  try {
+    const cars = await Car.find({ user_id: req.params.userId })
+    if (cars.length > 0) {
+      res.json(cars)
+    } else {
+      res.status(404).json({ message: "No cars found for this owner" })
     }
   } catch (error) {
     res.status(500).json({ message: error.message })
@@ -142,11 +157,9 @@ module.exports = {
   getApprovedCars,
   getAllCars,
   getCarById,
+  getCarsByOwner,
   createCar,
   updateCar,
   deleteCar,
-  updateCarApproval
+  updateCarApproval,
 }
-
-console.log("Car controller created successfully with CommonJS syntax!")
-
