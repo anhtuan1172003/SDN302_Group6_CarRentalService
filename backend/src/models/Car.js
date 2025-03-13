@@ -28,7 +28,7 @@ const carSchema = new mongoose.Schema(
     },
     car_status: {
       type: String,
-      enum: ["available", "booked", "maintenance", "unavailable"],
+      enum: ["available", "maintenance", "unavailable"],
       default: "available",
     },
     car_approved: {
@@ -96,12 +96,10 @@ const carSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
-  },
+  }
 )
 
 const Car = mongoose.model("Car", carSchema)
-
 module.exports = Car
 
 console.log("Car model created successfully with CommonJS syntax!")
-

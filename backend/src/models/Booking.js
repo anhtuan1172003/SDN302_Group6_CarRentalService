@@ -53,12 +53,10 @@ const bookingSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
-  },
+  }
 )
 
 const Booking = mongoose.model("Booking", bookingSchema)
-
 module.exports = Booking
 
 console.log("Booking model created successfully with CommonJS syntax!")
-

@@ -8,6 +8,7 @@ const {
   deleteCar,
   getCarsByOwner,
   updateCarApproval,
+  updateCarStatus
 } = require("../controllers/carController")
 const { protect, admin } = require("../middleware/auth")
 
@@ -20,14 +21,14 @@ router.get("/", getApprovedCars)
 router.get("/admin", protect, admin, getAllCars)
 router.post("/", protect, createCar)
 
-// Route 
+// Routes
 router.get("/:id", getCarById)
 router.put("/:id", protect, updateCar)
 router.delete("/:id", protect, admin, deleteCar)
 router.put("/:id/approve", protect, admin, updateCarApproval)
 router.get("/owner/:userId", protect, getCarsByOwner)
+router.put("/:id/status", protect, updateCarStatus)
 
 module.exports = router
 
 console.log("Car routes created successfully with CommonJS syntax!")
-
