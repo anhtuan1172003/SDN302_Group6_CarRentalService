@@ -87,7 +87,7 @@ function App() {
               }
             />
             <Route
-              path="/mycars"
+              path="/mycars/:id"
               element={
                 <PrivateRoute>
                   <MyCarsPage />
