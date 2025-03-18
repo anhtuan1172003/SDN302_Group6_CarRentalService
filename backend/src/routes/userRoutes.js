@@ -4,6 +4,7 @@ const {
   loginUser,
   getUserProfile,
   updateUserProfile,
+  changeUserPassword, // Thêm endpoint mới
   refreshToken,
   logoutUser,
   getUsers,
@@ -23,6 +24,8 @@ router.post("/refresh-token", refreshToken)
 // Protected routes
 router.get("/profile", protect, getUserProfile)
 router.put("/profile", protect, updateUserProfile)
+router.put("/change-password", protect, changeUserPassword)
+router.delete("/users/deleteaccount", protect, deleteUser);
 router.post("/logout", protect, logoutUser)
 
 // Admin routes
@@ -33,5 +36,4 @@ router.put("/:id", protect, admin, updateUser)
 
 module.exports = router
 
-console.log("User routes created successfully with CommonJS syntax!")
-
+console.log("User routes updated with change-password endpoint!")

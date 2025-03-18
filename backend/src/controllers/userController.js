@@ -112,7 +112,7 @@ const getUserProfile = async (req, res) => {
   }
 }
 
-// @desc    Update user profile
+// @desc    Update user profile (không bao gồm password)
 // @route   PUT /api/users/profile
 // @access  Private
 const updateUserProfile = async (req, res) => {
@@ -127,10 +127,6 @@ const updateUserProfile = async (req, res) => {
       user.date_of_birth = req.body.date_of_birth || user.date_of_birth
       user.driving_license = req.body.driving_license || user.driving_license
       user.national_id_no = req.body.national_id_no || user.national_id_no
-
-      if (req.body.password) {
-        user.password = req.body.password
-      }
 
       const updatedUser = await user.save()
 
@@ -153,6 +149,30 @@ const updateUserProfile = async (req, res) => {
   }
 }
 
+// @desc    Change user password
+// @route   PUT /api/users/change-password
+// @access  Private
+const changeUserPassword = async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    const { currentPassword, newPassword } = req.body;
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({ message: "Current and new password are required" });
+    }
+    if (!(await user.matchPassword(currentPassword))) {
+      return res.status(401).json({ message: "Current password is incorrect" });
+    }
+    user.password = newPassword;
+    await user.save();
+    res.json({ message: "Password changed successfully" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 // @desc    Refresh token
 // @route   POST /api/users/refresh-token
 // @access  Public
@@ -164,22 +184,18 @@ const refreshToken = async (req, res) => {
       return res.status(401).json({ message: "Refresh token is required" })
     }
 
-    // Find user with this refresh token
     const user = await User.findOne({ refresh_token: refreshToken })
 
     if (!user) {
       return res.status(403).json({ message: "Invalid refresh token" })
     }
 
-    // Verify refresh token
     jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, decoded) => {
       if (err || user._id.toString() !== decoded.id) {
         return res.status(403).json({ message: "Invalid refresh token" })
       }
 
-      // Generate new access token
       const newAccessToken = generateToken(user._id)
-
       res.json({ token: newAccessToken })
     })
   } catch (error) {
@@ -192,13 +208,11 @@ const refreshToken = async (req, res) => {
 // @access  Private
 const logoutUser = async (req, res) => {
   try {
-    // Clear refresh token
     const user = await User.findById(req.user._id)
 
     if (user) {
       user.refresh_token = null
       await user.save()
-
       res.json({ message: "Logged out successfully" })
     } else {
       res.status(404).json({ message: "User not found" })
@@ -220,23 +234,23 @@ const getUsers = async (req, res) => {
   }
 }
 
-// @desc    Delete user
-// @route   DELETE /api/users/:id
-// @access  Private/Admin
+// @desc    Delete user account
+// @route   DELETE /users/deleteaccount
+// @access  Private
 const deleteUser = async (req, res) => {
   try {
-    const user = await User.findById(req.params.id)
-
-    if (user) {
-      await user.deleteOne()
-      res.json({ message: "User removed" })
-    } else {
-      res.status(404).json({ message: "User not found" })
+    const user = await User.findById(req.user._id);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
     }
+
+    // Không cần kiểm tra quyền admin, chỉ cần xóa tài khoản của người dùng hiện tại
+    await User.findByIdAndDelete(req.user._id);
+    res.json({ message: "Account deleted successfully" });
   } catch (error) {
-    res.status(500).json({ message: error.message })
+    res.status(500).json({ message: error.message });
   }
-}
+};
 
 // @desc    Get user by ID
 // @route   GET /api/users/:id
@@ -255,7 +269,7 @@ const getUserById = async (req, res) => {
   }
 }
 
-// @desc    Update user
+// @desc    Update user (admin only)
 // @route   PUT /api/users/:id
 // @access  Private/Admin
 const updateUser = async (req, res) => {
@@ -283,11 +297,13 @@ const updateUser = async (req, res) => {
   }
 }
 
+
 module.exports = {
   registerUser,
   loginUser,
   getUserProfile,
   updateUserProfile,
+  changeUserPassword,
   refreshToken,
   logoutUser,
   getUsers,
@@ -295,6 +311,4 @@ module.exports = {
   getUserById,
   updateUser,
 }
-
-console.log("User controller created successfully with CommonJS syntax!")
 
