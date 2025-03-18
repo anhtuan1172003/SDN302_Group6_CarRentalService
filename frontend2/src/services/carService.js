@@ -95,7 +95,7 @@ export const updateCar = async (id, carData) => {
     // Gửi request PUT đến API
     const response = await axios.put(`/cars/${id}`, formData, {
       headers: {
-        "Content-Type": "multipart/form-data",
+        "Content-Type": "application/json",
       },
     });
 
