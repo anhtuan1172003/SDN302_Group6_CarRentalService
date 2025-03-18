@@ -77,6 +77,22 @@ const createCar = async (req, res) => {
   }
 }
 
+
+exports.getUserCars = async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    const cars = await Car.find({ user_id: userId });
+
+    res.json(cars);
+  } catch (error) {
+    console.error("Lỗi khi lấy danh sách xe:", error);
+    res.status(500).json({ message: "Lỗi server" });
+  }
+};
+
+
+
+
 // @desc    Update a car
 // @route   PUT /api/cars/:id
 // @access  Private
