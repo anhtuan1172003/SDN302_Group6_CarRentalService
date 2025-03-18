@@ -1,7 +1,5 @@
-"use client";
-
 import { useState, useEffect, useContext } from "react";
-import { useParams, Link, useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { Row, Col, ListGroup, Card, Button, Image, Carousel, Badge, Tabs, Tab } from "react-bootstrap";
 import { toast } from "react-toastify";
 import { getCarById } from "../services/carService"; 
@@ -15,46 +13,52 @@ const MyCardPage = () => {
   const navigate = useNavigate();
   const { user } = useContext(AuthContext);
 
-  const [card, setCar] = useState(null); 
-
+  const [car, setCar] = useState(null); 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchCard = async () => {
+    const fetchCar = async () => {
       try {
+        if (!id) {
+          setError("Invalid car ID");
+          setLoading(false);
+          return;
+        }
         const data = await getCarById(id);
-        setCar(data);
-        setLoading(false);
+        if (!data) {
+          setError("Car not found");
+        } else {
+          setCar(data);
+        }
       } catch (error) {
-        setError("Failed to load card details. Please try again later.");
+        setError("Failed to load car details. Please try again later.");
+      } finally {
         setLoading(false);
       }
     };
 
-    fetchCard();
+    fetchCar();
   }, [id]);
 
   return (
     <>
-      
-
       {loading ? (
         <Loader />
       ) : error ? (
         <Message variant="danger">{error}</Message>
-      ) : card ? (
+      ) : car ? (
         <>
           <Row>
             <Col md={7}>
-              {card.image_url && card.image_url.length > 0 ? (
+              {car.image_url && car.image_url.length > 0 ? (
                 <Carousel>
-                  {card.image_url.map((img, index) => (
+                  {car.image_url.map((img, index) => (
                     <Carousel.Item key={index}>
                       <img
                         className="d-block w-100 rounded"
                         src={img || "/placeholder.svg"}
-                        alt={`${card.title} - ${index + 1}`}
+                        alt={`${car.title} - ${index + 1}`}
                         style={{ height: "400px", objectFit: "cover" }}
                       />
                     </Carousel.Item>
@@ -63,7 +67,7 @@ const MyCardPage = () => {
               ) : (
                 <Image
                   src="/placeholder.jpg"
-                  alt={card.title}
+                  alt={car.title}
                   fluid
                   className="rounded"
                   style={{ height: "400px", objectFit: "cover", width: "100%" }}
@@ -74,25 +78,25 @@ const MyCardPage = () => {
             <Col md={5}>
               <Card className="shadow-sm">
                 <Card.Body>
-                  <Card.Title as="h2">{card.title}</Card.Title>
-                  <Card.Subtitle className="mb-2 text-muted">{card.subtitle}</Card.Subtitle>
+                  <Card.Title as="h2">{car.title}</Card.Title>
+                  <Card.Subtitle className="mb-2 text-muted">{car.subtitle}</Card.Subtitle>
 
                   <div className="my-3">
-                    <Badge bg={card.status === "active" ? "success" : "danger"} className="me-2">
-                      {card.status.charAt(0).toUpperCase() + card.status.slice(1)}
+                    <Badge bg={car.status === "active" ? "success" : "danger"} className="me-2">
+                      {car.status.charAt(0).toUpperCase() + car.status.slice(1)}
                     </Badge>
                   </div>
 
                   <Card.Text as="h3" className="text-primary mb-4">
-                    ${card.price}
+                    ${car.price}
                   </Card.Text>
 
                   <ListGroup variant="flush" className="mb-4">
                     <ListGroup.Item>
-                      <i className="fas fa-info-circle me-2"></i> Description: {card.description}
+                      <i className="fas fa-info-circle me-2"></i> Description: {car.description}
                     </ListGroup.Item>
                     <ListGroup.Item>
-                      <i className="fas fa-calendar me-2"></i> Date Added: {card.date_added}
+                      <i className="fas fa-calendar me-2"></i> Date Added: {car.date_added}
                     </ListGroup.Item>
                   </ListGroup>
                 </Card.Body>
@@ -105,12 +109,12 @@ const MyCardPage = () => {
               <Tabs defaultActiveKey="details" className="mb-3">
                 <Tab eventKey="details" title="Details">
                   <Card className="p-4">
-                    <Card.Text>{card.details || "No additional details available."}</Card.Text>
+                    <Card.Text>{car.details || "No additional details available."}</Card.Text>
                   </Card>
                 </Tab>
                 <Tab eventKey="terms" title="Terms of Use">
                   <Card className="p-4">
-                    <Card.Text>{card.terms_of_use}</Card.Text>
+                    <Card.Text>{car.terms_of_use}</Card.Text>
                   </Card>
                 </Tab>
               </Tabs>
@@ -118,7 +122,7 @@ const MyCardPage = () => {
           </Row>
         </>
       ) : (
-        <Message>Card not found</Message>
+        <Message>Car not found</Message>
       )}
     </>
   );
