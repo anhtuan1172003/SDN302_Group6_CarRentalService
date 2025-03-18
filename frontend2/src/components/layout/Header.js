@@ -51,6 +51,9 @@ const Header = () => {
                     <LinkContainer to="/profile">
                       <NavDropdown.Item>Profile</NavDropdown.Item>
                     </LinkContainer>
+                    <LinkContainer to="/changepassword">
+                      <NavDropdown.Item>Change Password</NavDropdown.Item>
+                    </LinkContainer>
                     <LinkContainer to="/mybookings">
                       <NavDropdown.Item>My Bookings</NavDropdown.Item>
                     </LinkContainer>
@@ -59,6 +62,9 @@ const Header = () => {
                     </LinkContainer>
                     <LinkContainer to="/addcar">
                       <NavDropdown.Item>Add Car</NavDropdown.Item>
+                    </LinkContainer>
+                    <LinkContainer to="/deleteaccount"> 
+                      <NavDropdown.Item>Delete Account</NavDropdown.Item>
                     </LinkContainer>
                     <NavDropdown.Divider />
                     <NavDropdown.Item onClick={logout}>Logout</NavDropdown.Item>
@@ -87,4 +93,3 @@ const Header = () => {
 }
 
 export default Header
-
