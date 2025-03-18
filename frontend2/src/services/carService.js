@@ -64,41 +64,49 @@ export const createCar = async (carData) => {
 // Update a car
 export const updateCar = async (id, carData) => {
   try {
-    const formData = new FormData()
+    const formData = new FormData();
 
-    // Add car details to form data
+    // Kiểm tra xem carData có hợp lệ không
+    if (!id || !carData) {
+      throw new Error("ID hoặc dữ liệu xe không hợp lệ");
+    }
+
+    // Thêm các trường dữ liệu vào formData (trừ hình ảnh và tài liệu)
     Object.keys(carData).forEach((key) => {
-      if (key !== "images" && key !== "documents") {
-        formData.append(key, carData[key])
+      if (key !== "images" && key !== "documents" && carData[key] !== undefined) {
+        formData.append(key, carData[key]);
       }
-    })
+    });
 
-    // Add images to form data
-    if (carData.images && carData.images.length > 0) {
+    // Kiểm tra và thêm hình ảnh vào formData
+    if (Array.isArray(carData.images) && carData.images.length > 0) {
       carData.images.forEach((image) => {
-        formData.append("images", image)
-      })
+        formData.append("images", image);
+      });
     }
 
-    // Add documents to form data
-    if (carData.documents && carData.documents.length > 0) {
+    // Kiểm tra và thêm tài liệu vào formData
+    if (Array.isArray(carData.documents) && carData.documents.length > 0) {
       carData.documents.forEach((doc) => {
-        formData.append("documents", doc)
-      })
+        formData.append("documents", doc);
+      });
     }
 
-    const response = await axios.put(`/api/cars/${id}`, formData, {
+    // Gửi request PUT đến API
+    const response = await axios.put(`/cars/${id}`, formData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
-    })
+    });
 
-    return response.data
+    console.log("Cập nhật xe thành công:", response.data);
+    return response.data;
   } catch (error) {
-    console.error(`Error updating car ${id}:`, error)
-    throw error
+    console.error(`Lỗi khi cập nhật xe ${id}:`, error.response?.data || error.message);
+    throw error;
   }
-}
+};
+
 
 // Get user's cars
 export const getUserCars = async () => {

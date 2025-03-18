@@ -317,9 +317,18 @@ const CarDetailsPage = () => {
 
                   {/* Nếu user là chủ xe thì hiển thị "Đã Book" */}
                   {user && car.user_id === user._id ? (
+                    <div>
                     <Button className="w-100 py-2" variant="secondary" disabled>
                       Your Car
                     </Button>
+                    <Button
+                      className="w-100 py-2 mt-3"
+                      variant="warning"
+                      onClick={() => navigate(`/edit-car/${car._id}`)}
+                    >
+                      Edit
+                    </Button>
+                  </div>
                   ) : (
                     <Button
                       onClick={handleBookNow}

@@ -3,7 +3,7 @@ import { Container } from "react-bootstrap"
 import { ToastContainer } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
 import "./App.css"
-
+import EditCarsPage from "./pages/EditCarsPage";
 // Layout Components
 import Header from "./components/layout/Header"
 import Footer from "./components/layout/Footer"
@@ -52,7 +52,7 @@ function App() {
             <Route path="/register" element={<Register/>} />
             <Route path="/about" element={<AboutPage />} />
             <Route path="/contact" element={<ContactPage />} />
-
+            <Route path="/edit-car/:id" element={<EditCarsPage />} />
             {/* Protected Routes */}
             <Route
               path="/profile"
