@@ -8,25 +8,37 @@ const MyCarsPage = () => {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-  // Giả sử bạn có userId từ localStorage hoặc context
+  // Lấy userId từ localStorage
   const userId = localStorage.getItem("user_id");
 
   useEffect(() => {
     const fetchCars = async () => {
-      try {
-        const response = await axios.get(`/cars/owner/${userId}`);
+      if (!userId) {
+        console.error("Không tìm thấy User ID trong localStorage");
+        setLoading(false);
+        return;
+      }
 
-        setCars(response.data);
+      try {
+        console.log("Đang lấy danh sách xe cho user:", userId);
+        const response = await axios.get(`http://localhost:8386/cars/owner/${userId}`);
+        console.log("Dữ liệu xe:", response.data);
+
+        if (Array.isArray(response.data)) {
+          setCars(response.data);
+        } else {
+          console.error("Dữ liệu API không hợp lệ:", response.data);
+          setCars([]);
+        }
       } catch (error) {
         console.error("Lỗi khi lấy danh sách xe:", error);
+        setCars([]);
       } finally {
         setLoading(false);
       }
     };
 
-    if (userId) {
-      fetchCars();
-    }
+    fetchCars();
   }, [userId]);
 
   const handleEdit = (id) => {
@@ -36,8 +48,8 @@ const MyCarsPage = () => {
   const handleDelete = async (id) => {
     if (window.confirm("Bạn có chắc muốn xóa xe này không?")) {
       try {
-        await axios.delete(`/cars/${id}`);
-        setCars(cars.filter((car) => car._id !== id));
+        await axios.delete(`http://localhost:8386/cars/${id}`);
+        setCars((prevCars) => prevCars.filter((car) => car._id !== id));
       } catch (error) {
         console.error("Lỗi khi xóa xe:", error);
       }
