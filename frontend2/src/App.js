@@ -11,7 +11,8 @@ import Footer from "./components/layout/Footer"
 // Public Pages
 import HomePage from "./pages/HomePage"
 import CarListPage from "./pages/CarListPage"
-import CarDetailsPage from "./pages/CarDetailsPage"
+// import CarDetailsPage from "./pages/CarDetailsPage"
+import CarDetailsPage from "./pages/CarDetailsPage_copy.js"
 import LoginPage from "./pages/LoginPage"
 import RegisterPage from "./pages/RegisterPage"
 import AboutPage from "./pages/AboutPage"
@@ -52,6 +53,7 @@ function App() {
             <Route path="/cars" element={<CarListPage />} />
             <Route path="/car/:id" element={<CarDetailsPage />} />
             <Route path="/term" element={<Term />} />
+           
             <Route path="*" element={<NotFoundPage />} />
             <Route path="/403" element={<Forbidden />} />
 

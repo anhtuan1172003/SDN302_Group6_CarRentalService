@@ -8,6 +8,7 @@ const {
   deleteCar,
   getCarsByOwner,
   updateCarApproval,
+  getCarFeedback,
 } = require("../controllers/carController")
 const { protect, admin } = require("../middleware/auth")
 
@@ -25,7 +26,9 @@ router.get("/:id", getCarById)
 router.put("/:id", protect, updateCar)
 router.delete("/:id", protect, admin, deleteCar)
 router.put("/:id/approve", protect, admin, updateCarApproval)
+router.get("/feedback/:carId", getCarFeedback)
 router.get("/owner/:userId", protect, getCarsByOwner)
+
 
 module.exports = router
 

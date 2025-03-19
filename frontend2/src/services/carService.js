@@ -143,4 +143,14 @@ export const deleteCar = async (id) => {
     throw error
   }
 }
+//Get all feedback of car
+export const getCarFeedback = async (carId) => {
+  try {
+    const { data } = await axios.get(`cars/feedback/${carId}`)
+    console.log(data);
+    return data
+  } catch (error) {
+    throw new Error("Failed to fetch car feedback.")
+  }
+}
 

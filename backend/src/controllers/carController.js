@@ -1,5 +1,7 @@
 const Car = require("../models/Car")
-
+const Feedback = require("../models/Feedback");
+const Booking = require("../models/Booking");
+const User = require("../models/User");
 // @desc    Get all approved cars
 // @route   GET /api/cars
 // @access  Public
@@ -153,6 +155,62 @@ const updateCarApproval = async (req, res) => {
   }
 }
 
+const getCarFeedback = async (req, res) => {
+  try {
+    const { carId } = req.params;
+
+    // Tìm tất cả các booking liên quan đến carId
+    const bookings = await Booking.find({ car_id: carId }).select("_id user_id");
+
+    if (!bookings.length) {
+      return res.status(404).json({ message: "No feedback found for this car" });
+    }
+
+    // Lấy danh sách booking_id từ các booking đã tìm được
+    const bookingIds = bookings.map(booking => booking._id);
+
+    // Tìm feedbacks có booking_id khớp với danh sách trên
+    const feedbacks = await Feedback.find({ booking_id: { $in: bookingIds } })
+      .select("content rating date booking_id")
+      .lean();
+
+    if (!feedbacks.length) {
+      return res.status(404).json({ message: "No feedback found for this car" });
+    }
+
+    // Lấy danh sách user_id từ bookings
+    const userMap = {};
+    bookings.forEach(booking => {
+      userMap[booking._id] = booking.user_id;
+    });
+
+    // Lấy danh sách user_id duy nhất
+    const userIds = [...new Set(Object.values(userMap))];
+
+    // Tìm user tương ứng
+    const users = await User.find({ _id: { $in: userIds } }).select("_id name").lean();
+
+    // Tạo user dictionary để tra cứu nhanh
+    const userDict = {};
+    users.forEach(user => {
+      userDict[user._id] = user.name;
+    });
+
+    // Gắn username vào feedbacks
+    const feedbackWithUser = feedbacks.map(feedback => ({
+      content: feedback.content,
+      rating: feedback.rating + " star(s)",
+      date: feedback.date,
+      username: userDict[userMap[feedback.booking_id]] || "Unknown",
+    }));
+
+    res.json(feedbackWithUser);
+  } catch (error) {
+    console.error("Error fetching car feedback:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
 module.exports = {
   getApprovedCars,
   getAllCars,
@@ -162,4 +220,5 @@ module.exports = {
   updateCar,
   deleteCar,
   updateCarApproval,
+  getCarFeedback
 }
