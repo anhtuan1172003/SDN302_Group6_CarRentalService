@@ -46,16 +46,7 @@ const MyCarsPage = () => {
     navigate(`/edit-car/${id}`);
   };
 
-  const handleDelete = async (id) => {
-    if (window.confirm("Bạn có chắc muốn xóa xe này không?")) {
-      try {
-        await axios.delete(`http://localhost:8386/cars/${id}`);
-        setCars((prevCars) => prevCars.filter((car) => car._id !== id));
-      } catch (error) {
-        console.error("Lỗi khi xóa xe:", error);
-      }
-    }
-  };
+  
 
   return (
     <Container>
@@ -75,10 +66,8 @@ const MyCarsPage = () => {
                   <Card.Text>Giá: {car.base_price} VNĐ</Card.Text>
                   <Button variant="primary" onClick={() => handleEdit(car._id)}>
                     Sửa
-                  </Button>{" "}
-                  <Button variant="danger" onClick={() => handleDelete(car._id)}>
-                    Xóa
                   </Button>
+              
                 </Card.Body>
               </Card>
             </Col>
