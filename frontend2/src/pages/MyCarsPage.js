@@ -13,6 +13,7 @@ const MyCarsPage = () => {
 
   useEffect(() => {
     const fetchCars = async () => {
+      console.log("User ID from localStorage:", userId); // Kiểm tra giá trị userId
       if (!userId) {
         console.error("Không tìm thấy User ID trong localStorage");
         setLoading(false);
