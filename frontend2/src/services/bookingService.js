@@ -3,7 +3,12 @@ import axios from "axios"
 // Create a new booking
 export const createBooking = async (bookingData) => {
   try {
-    const response = await axios.post("/api/bookings", bookingData)
+    const token = localStorage.getItem('token');
+    const response = await axios.post("/bookings", bookingData,{
+      headers:{
+        'Authorization':`Bearer ${token}`,
+      }
+    })
     return response.data
   } catch (error) {
     console.error("Error creating booking:", error)
