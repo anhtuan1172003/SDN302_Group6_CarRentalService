@@ -16,6 +16,8 @@ import LoginPage from "./pages/LoginPage"
 import RegisterPage from "./pages/RegisterPage"
 import AboutPage from "./pages/AboutPage"
 import ContactPage from "./pages/ContactPage"
+import Forbidden from "./pages/ErrorPage/Forbidden";
+import NotFoundPage from "./pages/ErrorPage/NotFoundPage";
 
 // Protected Pages
 import ProfilePage from "./pages/ProfilePage"
@@ -36,6 +38,7 @@ import AdminRoute from "./components/auth/AdminRoute"
 import Login from "./pages/Login.js"
 import Register from "./pages/Register.js"
 import Term from "./pages/TermPage.js"
+import MyWallet from "./pages/MyWallet.js"
 
 function App() {
   return (
@@ -49,6 +52,8 @@ function App() {
             <Route path="/cars" element={<CarListPage />} />
             <Route path="/car/:id" element={<CarDetailsPage />} />
             <Route path="/term" element={<Term />} />
+            <Route path="*" element={<NotFoundPage />} />
+            <Route path="/403" element={<Forbidden />} />
 
             {/* <Route path="/login" element={<LoginPage />} /> */}
             <Route path="/login" element={<Login/>} />
@@ -94,6 +99,14 @@ function App() {
               element={
                 <PrivateRoute>
                   <MyCarsPage />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/my_wallet"
+              element={
+                <PrivateRoute>
+                  <MyWallet/>
                 </PrivateRoute>
               }
             />
