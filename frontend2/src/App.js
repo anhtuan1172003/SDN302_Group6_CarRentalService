@@ -35,6 +35,7 @@ import PrivateRoute from "./components/auth/PrivateRoute"
 import AdminRoute from "./components/auth/AdminRoute"
 import Login from "./pages/Login.js"
 import Register from "./pages/Register.js"
+import Term from "./pages/TermPage.js"
 
 function App() {
   return (
@@ -47,6 +48,8 @@ function App() {
             <Route path="/" element={<HomePage />} />
             <Route path="/cars" element={<CarListPage />} />
             <Route path="/car/:id" element={<CarDetailsPage />} />
+            <Route path="/term" element={<Term />} />
+
             {/* <Route path="/login" element={<LoginPage />} /> */}
             <Route path="/login" element={<Login/>} />
             <Route path="/register" element={<Register/>} />

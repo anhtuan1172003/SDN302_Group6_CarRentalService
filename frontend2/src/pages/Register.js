@@ -8,7 +8,8 @@ function Register() {
   const [name, setName] = useState("")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
-  const navigate = useNavigate
+  const [agree, setAgree] = useState(false)
+  const navigate = useNavigate()
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -50,7 +51,22 @@ function Register() {
             required
           />
         </div>
-        <button type="submit" className="btn btn-primary">
+
+        {/* Check box Terms & Conditions */}
+        <div className="form-check mt-3">
+          <input
+            type="checkbox"
+            id="terms"
+            className="form-check-input"
+            checked={agree}
+            onChange={(e) => setAgree(e.target.checked)}
+          />
+          <label htmlFor="terms" className="form-check-label">
+            I agree to the <a href="/term">Terms & Conditions</a>
+          </label>
+        </div>
+
+        <button type="submit" className="btn btn-primary mt-3" disabled={!agree}>
           Register
         </button>
       </form>
@@ -59,4 +75,3 @@ function Register() {
 }
 
 export default Register
-
