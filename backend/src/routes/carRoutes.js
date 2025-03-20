@@ -21,11 +21,12 @@ router.get("/admin", protect, admin, getAllCars)
 router.post("/", protect, createCar)
 
 // Route 
+router.get("/owner/:userId", protect, getCarsByOwner)
 router.get("/:id", getCarById)
 router.put("/:id", protect, updateCar)
 router.delete("/:id", protect, admin, deleteCar)
 router.put("/:id/approve", protect, admin, updateCarApproval)
-router.get("/owner/:userId", protect, getCarsByOwner)
+
 
 module.exports = router
 

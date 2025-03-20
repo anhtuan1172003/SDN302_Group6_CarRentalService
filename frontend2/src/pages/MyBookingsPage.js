@@ -1,5 +1,9 @@
-export default function AboutPage() {
-    return(
-        <div> About page</div>
-    )
+import React from 'react'
+
+function MyBookingsPage() {
+  return (
+    <div>MyBookingsPage</div>
+  )
 }
+
+export default MyBookingsPage

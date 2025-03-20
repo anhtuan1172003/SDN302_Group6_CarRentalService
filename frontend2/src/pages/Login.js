@@ -28,7 +28,9 @@ function Login() {
         const res = await axios.post("http://localhost:8386/users/login", { email, password });
         console.log(res); // Kiểm tra phản hồi từ API
         if (res.data.token) {
+          console.log("User ID from API:", res.data._id); // Kiểm tra _id từ API
             localStorage.setItem("token", res.data.token); // Lưu token vào localStorage
+            localStorage.setItem("user_id", res.data._id);
             navigate("/"); // Điều hướng về trang chính
         } else {
             alert("Login failed. No token received.");
