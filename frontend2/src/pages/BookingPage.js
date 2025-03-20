@@ -172,6 +172,7 @@ const BookingPage = () => {
                       <option value="credit_card">Credit Card</option>
                       <option value="paypal">PayPal</option>
                       <option value="bank_transfer">Bank Transfer</option>
+                      <option value="vnpay">VNPay</option>
                     </Form.Select>
                   </Form.Group>
 

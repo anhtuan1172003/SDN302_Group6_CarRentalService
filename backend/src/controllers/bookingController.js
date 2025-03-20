@@ -1,5 +1,6 @@
 const Booking = require("../models/Booking")
 const Car = require("../models/Car")
+const Transaction = require("../models/Transaction")
 
 // @desc    Create new booking
 // @route   POST /api/bookings
@@ -172,6 +173,36 @@ const deleteBooking = async (req, res) => {
   }
 }
 
+const completeBooking = async (req, res) => {
+  try {
+    const { amount, payment_type, transaction_type, description, booking_id, recipient_id } = req.body
+
+    // Calculate fee (e.g., 5% of amount)
+    const fee = amount * 0.05
+    const net_amount = amount - fee
+    const updateBooking = await Booking.findOneAndUpdate(
+      { _id: booking_id },
+      { booking_status: "completed" }
+    )
+    if (!updateBooking) res.status(404).json({ message: "Booking not found" })
+    await Transaction.create({
+      amount,
+      net_amount,
+      fee,
+      payment_type,
+      transaction_type,
+      description,
+      booking_id: booking_id,
+      sender_id: req.user._id,
+      recipient_id: recipient_id || req.user._id,
+      status: "completed",
+    })
+    res.json("Complete booking success")
+  } catch (error) {
+    res.status(500).json({ message: error.message })
+  }
+}
+
 module.exports = {
   createBooking,
   getBookingById,
@@ -179,6 +210,7 @@ module.exports = {
   getBookings,
   updateBookingStatus,
   deleteBooking,
+  completeBooking
 }
 
 console.log("Booking controller created successfully with CommonJS syntax!")
