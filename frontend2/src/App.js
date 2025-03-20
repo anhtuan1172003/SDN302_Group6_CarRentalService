@@ -1,3 +1,4 @@
+// src/App.js
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Container } from "react-bootstrap";
 import { ToastContainer } from "react-toastify";
@@ -6,6 +7,7 @@ import "./App.css";
 
 // Layout Components
 import Header from "./components/layout/Header";
+import AdminHeader from "./components/layout/AdminHeader";
 import Footer from "./components/layout/Footer";
 
 // Public Pages
@@ -20,7 +22,6 @@ import ContactPage from "./pages/ContactPage";
 // Protected Pages
 import ProfilePage from "./pages/ProfilePage";
 import ChangePasswordPage from "./pages/ChangePasswordPage"; 
-import DeleteAccountPage from "./pages/DeleteAccountPage";
 import BookingPage from "./pages/BookingPage";
 import MyBookingsPage from "./pages/MyBookingsPage";
 import AddCarPage from "./pages/AddCarPage.js";
@@ -30,18 +31,22 @@ import MyCarsPage from "./pages/MyCarsPage.js";
 import AdminDashboard from "./pages/admin/DashBoard.js";
 import AdminCarsPage from "./pages/admin/CarsPage";
 import AdminBookingsPage from "./pages/admin/BookingsPage";
-import AdminUsersPage from "./pages/admin/UsersPage";
+import AdminUsersPage from "./pages/admin/AdminUsersPage.js";
 
 // Auth Components
 import PrivateRoute from "./components/auth/PrivateRoute";
 import AdminRoute from "./components/auth/AdminRoute";
 import Login from "./pages/Login.js";
 import Register from "./pages/Register.js";
+import AuthContext from "./context/AuthContext";
+import { useContext } from "react";
 
 function App() {
+  const { user, isAdmin } = useContext(AuthContext);
+
   return (
     <>
-      <Header />
+      {user && isAdmin() ? <AdminHeader /> : <Header />}
       <main className="py-3">
         <Container>
           <Routes>
@@ -68,14 +73,6 @@ function App() {
               element={
                 <PrivateRoute>
                   <ChangePasswordPage />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="/deleteaccount" 
-              element={
-                <PrivateRoute>
-                  <DeleteAccountPage />
                 </PrivateRoute>
               }
             />

@@ -1,3 +1,4 @@
+// src/components/layout/Header.js
 "use client"
 
 import { useContext } from "react"
@@ -7,6 +8,11 @@ import AuthContext from "../../context/AuthContext"
 
 const Header = () => {
   const { user, logout, isAdmin } = useContext(AuthContext)
+
+  // If user is admin, this header won't be used
+  if (user && isAdmin()) {
+    return null
+  }
 
   return (
     <header>
@@ -30,46 +36,25 @@ const Header = () => {
             </Nav>
             <Nav>
               {user ? (
-                <>
-                  {isAdmin() && (
-                    <NavDropdown title="Admin" id="admin-nav-dropdown">
-                      <LinkContainer to="/admin">
-                        <NavDropdown.Item>Dashboard</NavDropdown.Item>
-                      </LinkContainer>
-                      <LinkContainer to="/admin/cars">
-                        <NavDropdown.Item>Cars</NavDropdown.Item>
-                      </LinkContainer>
-                      <LinkContainer to="/admin/bookings">
-                        <NavDropdown.Item>Bookings</NavDropdown.Item>
-                      </LinkContainer>
-                      <LinkContainer to="/admin/users">
-                        <NavDropdown.Item>Users</NavDropdown.Item>
-                      </LinkContainer>
-                    </NavDropdown>
-                  )}
-                  <NavDropdown title={user.name} id="username">
-                    <LinkContainer to="/profile">
-                      <NavDropdown.Item>Profile</NavDropdown.Item>
-                    </LinkContainer>
-                    <LinkContainer to="/changepassword">
-                      <NavDropdown.Item>Change Password</NavDropdown.Item>
-                    </LinkContainer>
-                    <LinkContainer to="/mybookings">
-                      <NavDropdown.Item>My Bookings</NavDropdown.Item>
-                    </LinkContainer>
-                    <LinkContainer to="/mycars">
-                      <NavDropdown.Item>My Cars</NavDropdown.Item>
-                    </LinkContainer>
-                    <LinkContainer to="/addcar">
-                      <NavDropdown.Item>Add Car</NavDropdown.Item>
-                    </LinkContainer>
-                    <LinkContainer to="/deleteaccount"> 
-                      <NavDropdown.Item>Delete Account</NavDropdown.Item>
-                    </LinkContainer>
-                    <NavDropdown.Divider />
-                    <NavDropdown.Item onClick={logout}>Logout</NavDropdown.Item>
-                  </NavDropdown>
-                </>
+                <NavDropdown title={user.name} id="username">
+                  <LinkContainer to="/profile">
+                    <NavDropdown.Item>Profile</NavDropdown.Item>
+                  </LinkContainer>
+                  <LinkContainer to="/changepassword">
+                    <NavDropdown.Item>Change Password</NavDropdown.Item>
+                  </LinkContainer>
+                  <LinkContainer to="/mybookings">
+                    <NavDropdown.Item>My Bookings</NavDropdown.Item>
+                  </LinkContainer>
+                  <LinkContainer to="/mycars">
+                    <NavDropdown.Item>My Cars</NavDropdown.Item>
+                  </LinkContainer>
+                  <LinkContainer to="/addcar">
+                    <NavDropdown.Item>Add Car</NavDropdown.Item>
+                  </LinkContainer>
+                  <NavDropdown.Divider />
+                  <NavDropdown.Item onClick={logout}>Logout</NavDropdown.Item>
+                </NavDropdown>
               ) : (
                 <>
                   <LinkContainer to="/login">

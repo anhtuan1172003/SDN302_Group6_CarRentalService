@@ -1,19 +1,23 @@
-"use client"
-
-import { useContext } from "react"
-import { Navigate } from "react-router-dom"
-import AuthContext from "../../context/AuthContext"
-import Loader from "../ui/Loader"
+// src/components/auth/AdminRoute.js
+import { useContext } from "react";
+import { Navigate } from "react-router-dom";
+import AuthContext from "../../context/AuthContext";
 
 const AdminRoute = ({ children }) => {
-  const { user, loading, isAdmin } = useContext(AuthContext)
+  const { user, isAdmin, loading } = useContext(AuthContext);
 
   if (loading) {
-    return <Loader />
+    return <div>Loading...</div>;
   }
 
-  return user && isAdmin() ? children : <Navigate to="/" />
-}
+  console.log("AdminRoute - User:", user);
+  console.log("AdminRoute - isAdmin:", isAdmin());
 
-export default AdminRoute
+  if (!user || !isAdmin()) {
+    return <Navigate to="/" />;
+  }
 
+  return children;
+};
+
+export default AdminRoute;
