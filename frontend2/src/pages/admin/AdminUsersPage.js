@@ -26,6 +26,7 @@ import AuthContext from "../../context/AuthContext";
 export default function AdminUsersPage() {
   const { user, logout } = useContext(AuthContext);
   const [users, setUsers] = useState([]);
+  const [allUsers, setAllUsers] = useState([]);
   const [totalUsers, setTotalUsers] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -37,6 +38,7 @@ export default function AdminUsersPage() {
   const [searchName, setSearchName] = useState("");
   const [searchEmail, setSearchEmail] = useState("");
   const [filteredUsers, setFilteredUsers] = useState([]);
+  const [isSearching, setIsSearching] = useState(false);
 
   // Modal states
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -47,11 +49,14 @@ export default function AdminUsersPage() {
   const [selectedCar, setSelectedCar] = useState(null);
   const [loadingDetails, setLoadingDetails] = useState(false);
 
-  // Fetch users when page changes
+  // Fetch users when page changes (chỉ khi không tìm kiếm)
   useEffect(() => {
-    fetchUsers();
-  }, [currentPage]);
+    if (!isSearching) {
+      fetchUsers();
+    }
+  }, [currentPage, isSearching]);
 
+  // Fetch users for pagination
   const fetchUsers = async () => {
     try {
       setLoading(true);
@@ -65,7 +70,7 @@ export default function AdminUsersPage() {
 
       const usersArray = data.users || [];
       setUsers(usersArray);
-      setFilteredUsers(usersArray); // Ban đầu, danh sách lọc giống danh sách gốc
+      setFilteredUsers(usersArray);
       setTotalUsers(data.totalUsers || 0);
       setTotalPages(data.totalPages || 1);
       setLoading(false);
@@ -99,42 +104,95 @@ export default function AdminUsersPage() {
     }
   };
 
+  // Fetch all users when searching
+  const fetchAllUsers = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      console.log("Fetching all users for search...");
+      const data = await getAllUsers(1); // Không truyền limit để lấy tất cả
+      console.log("API response from getAllUsers (all users):", data);
+
+      const usersArray = data.users || [];
+      setAllUsers(usersArray);
+      setLoading(false);
+    } catch (error) {
+      console.error("Error fetching all users:", error);
+      let errorMessage = "Failed to load users.";
+      if (error.response) {
+        if (error.response.status === 404) {
+          errorMessage =
+            "Error 404: The requested resource was not found.";
+        } else if (error.response.status === 401) {
+          errorMessage =
+            "Error 401: Unauthorized. Your session may have expired. Logging out...";
+          setTimeout(() => logout(), 3000);
+        } else if (error.response.status === 403) {
+          errorMessage =
+            "Error 403: Forbidden. You lack permission to view users.";
+        } else {
+          errorMessage = `Server error: ${error.response.status} - ${
+            error.response.data?.message || "Unknown error"
+          }`;
+        }
+      } else if (error.request) {
+        errorMessage = "Network error: Unable to connect to the server.";
+      } else {
+        errorMessage = `Error: ${error.message}`;
+      }
+      setError(errorMessage);
+      setLoading(false);
+      toast.error(errorMessage);
+    }
+  };
+
   // Lọc người dùng dựa trên searchName và searchEmail
   useEffect(() => {
-    let filtered = users;
+    const hasSearch = searchName || searchEmail;
+    setIsSearching(hasSearch);
 
-    // Lọc theo tên
-    if (searchName) {
-      filtered = filtered.filter((user) =>
-        (user.name || user.username || "")
-          .toLowerCase()
-          .includes(searchName.toLowerCase())
-      );
+    if (hasSearch) {
+      fetchAllUsers();
+    } else {
+      setFilteredUsers(users);
     }
+  }, [searchName, searchEmail]);
 
-    // Lọc theo email
-    if (searchEmail) {
-      filtered = filtered.filter((user) =>
-        (user.email || "")
-          .toLowerCase()
-          .includes(searchEmail.toLowerCase())
-      );
+  // Lọc dữ liệu khi allUsers thay đổi (khi tìm kiếm)
+  useEffect(() => {
+    if (isSearching) {
+      let filtered = allUsers;
+
+      if (searchName) {
+        filtered = filtered.filter((user) =>
+          (user.name || user.username || "")
+            .toLowerCase()
+            .includes(searchName.toLowerCase())
+        );
+      }
+
+      if (searchEmail) {
+        filtered = filtered.filter((user) =>
+          (user.email || "")
+            .toLowerCase()
+            .includes(searchEmail.toLowerCase())
+        );
+      }
+
+      setFilteredUsers(filtered);
     }
-
-    setFilteredUsers(filtered);
-    // Không ghi đè totalUsers và totalPages khi lọc
-  }, [searchName, searchEmail, users]);
+  }, [allUsers, searchName, searchEmail, isSearching]);
 
   const handleSearch = () => {
-    // Không cần gọi lại API, vì đã lọc ở frontend
+    // Không cần gọi lại API, vì đã xử lý trong useEffect
   };
 
   const handleClearFilters = () => {
     setSearchName("");
     setSearchEmail("");
-    setFilteredUsers(users); // Reset danh sách lọc về danh sách gốc
+    setIsSearching(false);
     setCurrentPage(1);
-    fetchUsers(); // Gọi lại API để lấy dữ liệu gốc
+    fetchUsers();
   };
 
   const handleDeleteClick = (user) => {
@@ -146,6 +204,7 @@ export default function AdminUsersPage() {
     setLoadingDetails(true);
     setShowDetailsModal(true);
     try {
+      console.log("Fetching user details for ID:", user._id);
       const userData = await getUserById(user._id);
       console.log("User details from getUserById:", userData);
       setUserDetails(userData);
@@ -185,7 +244,11 @@ export default function AdminUsersPage() {
       await deleteUser(selectedUser._id);
       toast.success("User deleted successfully");
       setShowDeleteModal(false);
-      fetchUsers();
+      if (isSearching) {
+        fetchAllUsers();
+      } else {
+        fetchUsers();
+      }
     } catch (error) {
       console.error("Error deleting user:", error);
       toast.error("Failed to delete user");
@@ -252,7 +315,7 @@ export default function AdminUsersPage() {
         <Message variant="danger">
           {error}
           <div className="mt-2">
-            <Button variant="outline-primary" onClick={fetchUsers}>
+            <Button variant="outline-primary" onClick={isSearching ? fetchAllUsers : fetchUsers}>
               Retry
             </Button>
           </div>
@@ -311,8 +374,8 @@ export default function AdminUsersPage() {
             </tbody>
           </Table>
 
-          {/* Pagination */}
-          {totalPages > 1 && (
+          {/* Pagination: Chỉ hiển thị khi không có tìm kiếm */}
+          {!isSearching && totalPages > 1 && (
             <Pagination className="justify-content-center mt-4">
               <Pagination.Prev
                 onClick={() => setCurrentPage(currentPage - 1)}
@@ -327,6 +390,162 @@ export default function AdminUsersPage() {
           )}
         </>
       )}
+
+      {/* User Details Modal */}
+      <Modal
+        show={showDetailsModal}
+        onHide={() => setShowDetailsModal(false)}
+        size="lg"
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>User Details</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {loadingDetails ? (
+            <Loader />
+          ) : userDetails ? (
+            <>
+              <h5>User Information</h5>
+              <p>
+                <strong>Name:</strong>{" "}
+                {userDetails.name || userDetails.username}
+              </p>
+              <p>
+                <strong>Age:</strong>{" "}
+                {userDetails.date_of_birth
+                  ? new Date().getFullYear() -
+                    new Date(userDetails.date_of_birth).getFullYear()
+                  : "Not specified"}
+              </p>
+              <p>
+                <strong>Email:</strong> {userDetails.email}
+              </p>
+              <p>
+                <strong>Address:</strong>{" "}
+                {userDetails.address || "Not specified"}
+              </p>
+
+              <h5 className="mt-4">Cars Posted by User</h5>
+              {userDetails.cars && userDetails.cars.length > 0 ? (
+                <Row>
+                  {userDetails.cars.map((car) => (
+                    <Col md={4} key={car._id} className="mb-4">
+                      <Card>
+                        <Card.Body>
+                          <Card.Title>{car.make} {car.model}</Card.Title>
+                          <Card.Text>
+                            <strong>Year:</strong> {car.year}
+                            <br />
+                            <strong>Price per Day:</strong> ${car.pricePerDay}
+                          </Card.Text>
+                          <Button
+                            variant="info"
+                            size="sm"
+                            onClick={() => handleCarDetailsClick(car)}
+                          >
+                            <i className="fas fa-eye"></i> Details
+                          </Button>
+                        </Card.Body>
+                      </Card>
+                    </Col>
+                  ))}
+                </Row>
+              ) : (
+                <Message variant="info">
+                  This user has not posted any cars.
+                </Message>
+              )}
+            </>
+          ) : (
+            <Message variant="danger">
+              Failed to load user details.
+            </Message>
+          )}
+        </Modal.Body>
+        <Modal.Footer>
+          <Button
+            variant="secondary"
+            onClick={() => setShowDetailsModal(false)}
+          >
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+      {/* Car Details Modal */}
+      <Modal
+        show={showCarDetailsModal}
+        onHide={() => setShowCarDetailsModal(false)}
+        size="md"
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>Car Details</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {selectedCar ? (
+            <>
+              <p>
+                <strong>Make:</strong> {selectedCar.make}
+              </p>
+              <p>
+                <strong>Model:</strong> {selectedCar.model}
+              </p>
+              <p>
+                <strong>Year:</strong> {selectedCar.year}
+              </p>
+              <p>
+                <strong>Price per Day:</strong> ${selectedCar.pricePerDay}
+              </p>
+              <p>
+                <strong>Posted on:</strong>{" "}
+                {new Date(selectedCar.createdAt).toLocaleDateString()}
+              </p>
+            </>
+          ) : (
+            <Message variant="danger">
+              Failed to load car details.
+            </Message>
+          )}
+        </Modal.Body>
+        <Modal.Footer>
+          <Button
+            variant="secondary"
+            onClick={() => setShowCarDetailsModal(false)}
+          >
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+      {/* Delete Modal */}
+      <Modal
+        show={showDeleteModal}
+        onHide={() => setShowDeleteModal(false)}
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>Delete User</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {selectedUser && (
+            <p>
+              Are you sure you want to delete{" "}
+              {selectedUser.name || selectedUser.username}'s account? This
+              action cannot be undone.
+            </p>
+          )}
+        </Modal.Body>
+        <Modal.Footer>
+          <Button
+            variant="secondary"
+            onClick={() => setShowDeleteModal(false)}
+          >
+            Cancel
+          </Button>
+          <Button variant="danger" onClick={handleDeleteSubmit}>
+            Delete
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </Container>
   );
 }

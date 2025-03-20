@@ -269,26 +269,36 @@ const logoutUser = async (req, res) => {
 const getUsers = async (req, res) => {
   try {
     // Lấy các tham số từ query
-    const { page = 1, limit = 15 } = req.query;
+    const { page = 1, limit } = req.query;
 
-    // Tính toán skip và limit cho phân trang
-    const skip = (parseInt(page) - 1) * parseInt(limit);
-
-    // Lấy tất cả người dùng
-    const users = await User.find({})
-      .populate({ path: "role_id", select: "name description" })
-      .select("-password -refresh_token")
-      .skip(skip)
-      .limit(parseInt(limit));
+    let users;
+    let totalUsers;
 
     // Đếm tổng số người dùng
-    const totalUsers = await User.countDocuments({});
+    totalUsers = await User.countDocuments({});
+
+    if (limit) {
+      // Tính toán skip và limit cho phân trang
+      const skip = (parseInt(page) - 1) * parseInt(limit);
+
+      // Lấy người dùng với phân trang
+      users = await User.find({})
+        .populate({ path: "role_id", select: "name description" })
+        .select("-password -refresh_token")
+        .skip(skip)
+        .limit(parseInt(limit));
+    } else {
+      // Lấy tất cả người dùng nếu không có limit
+      users = await User.find({})
+        .populate({ path: "role_id", select: "name description" })
+        .select("-password -refresh_token");
+    }
 
     res.json({
-      users: users, // Không lọc bỏ admin nữa
+      users: users,
       totalUsers,
       currentPage: parseInt(page),
-      totalPages: Math.ceil(totalUsers / parseInt(limit)),
+      totalPages: limit ? Math.ceil(totalUsers / parseInt(limit)) : 1,
     });
   } catch (error) {
     console.error("Error in getUsers:", error);

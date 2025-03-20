@@ -28,20 +28,20 @@ export const getAllUsers = async (page, limit, name, age) => {
 
 // Hàm lấy chi tiết người dùng
 export const getUserById = async (id) => {
-  try {
-    console.log("Calling getUserById with id:", id);
-    const response = await axios.get(`${API_BASE_URL}/users/${id}`, {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-    });
-    console.log("getUserById response:", response.data);
-    return response.data;
-  } catch (error) {
-    console.error("Error in getUserById:", error.response || error);
-    throw error;
-  }
-};
+    try {
+      console.log("Calling getUserById with id:", id);
+      const response = await axios.get(`${API_BASE_URL}/users/${id}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      console.log("getUserById response:", response.data);
+      return response.data;
+    } catch (error) {
+      console.error("Error in getUserById:", error.response || error);
+      throw error;
+    }
+  };
 
 // Hàm xóa người dùng
 export const deleteUser = async (id) => {
