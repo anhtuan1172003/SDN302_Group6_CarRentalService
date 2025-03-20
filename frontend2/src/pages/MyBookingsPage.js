@@ -122,5 +122,3 @@ export default function MyBookingsPage() {
         </div>
     )
 }
-
-export default MyBookingsPage
