@@ -373,6 +373,7 @@ const CarDetailsPage = () => {
                     <Card.Text>
                       <i className="fas fa-map-marker-alt me-2"></i> {car.address}
                     </Card.Text>
+                    {/* You can add a map here if you have coordinates */}
                   </Card>
                 </Tab>
               </Tabs>

@@ -11,11 +11,14 @@ import Footer from "./components/layout/Footer"
 // Public Pages
 import HomePage from "./pages/HomePage"
 import CarListPage from "./pages/CarListPage"
-import CarDetailsPage from "./pages/CarDetailsPage"
+// import CarDetailsPage from "./pages/CarDetailsPage"
+import CarDetailsPage from "./pages/CarDetailsPage_copy.js"
 import LoginPage from "./pages/LoginPage"
 import RegisterPage from "./pages/RegisterPage"
 import AboutPage from "./pages/AboutPage"
 import ContactPage from "./pages/ContactPage"
+import Forbidden from "./pages/ErrorPage/Forbidden";
+import NotFoundPage from "./pages/ErrorPage/NotFoundPage";
 
 // Protected Pages
 import ProfilePage from "./pages/ProfilePage"
@@ -35,6 +38,8 @@ import PrivateRoute from "./components/auth/PrivateRoute"
 import AdminRoute from "./components/auth/AdminRoute"
 import Login from "./pages/Login.js"
 import Register from "./pages/Register.js"
+import Term from "./pages/TermPage.js"
+import MyWallet from "./pages/MyWallet.js"
 
 function App() {
   return (
@@ -47,6 +52,11 @@ function App() {
             <Route path="/" element={<HomePage />} />
             <Route path="/cars" element={<CarListPage />} />
             <Route path="/car/:id" element={<CarDetailsPage />} />
+            <Route path="/term" element={<Term />} />
+           
+            <Route path="*" element={<NotFoundPage />} />
+            <Route path="/403" element={<Forbidden />} />
+
             {/* <Route path="/login" element={<LoginPage />} /> */}
             <Route path="/login" element={<Login/>} />
             <Route path="/register" element={<Register/>} />
@@ -91,6 +101,14 @@ function App() {
               element={
                 <PrivateRoute>
                   <MyCarsPage />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/my_wallet"
+              element={
+                <PrivateRoute>
+                  <MyWallet/>
                 </PrivateRoute>
               }
             />
