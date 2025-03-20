@@ -3,7 +3,12 @@ import axios from "axios"
 // Create a new booking
 export const createBooking = async (bookingData) => {
   try {
-    const response = await axios.post("/api/bookings", bookingData)
+    const token = localStorage.getItem('token');
+    const response = await axios.post("/bookings", bookingData, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      }
+    })
     return response.data
   } catch (error) {
     console.error("Error creating booking:", error)
@@ -51,6 +56,16 @@ export const updateBookingStatus = async (id, status) => {
     return response.data
   } catch (error) {
     console.error(`Error updating booking status for ${id}:`, error)
+    throw error
+  }
+}
+
+export const completeBooking = async (body) => {
+  try {
+    const response = await axios.post(`/bookings/completeBooking`, body)
+    return response.data
+  } catch (error) {
+    console.error(`Error :`, error)
     throw error
   }
 }
