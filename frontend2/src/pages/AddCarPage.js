@@ -101,8 +101,8 @@ function AddCarPage() {
 
   const uploadFilesToCloudinary = async (files) => {
     const urls = [];
-    const uploadPreset = "SDN302_Image_Upload"; // Thay đổi theo cấu hình của bạn
-    const cloudName = "dvdnw79tk"; // Thay đổi theo cấu hình của bạn
+    const uploadPreset = "SDN302_Image_Upload"; 
+    const cloudName = "dvdnw79tk";
 
     for (const file of files) {
       const formData = new FormData();
@@ -355,4 +355,3 @@ function AddCarPage() {
 
 export default AddCarPage;
 
-//done

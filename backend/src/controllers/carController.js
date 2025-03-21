@@ -190,7 +190,7 @@ const getCarFeedback = async (req, res) => {
     // Tìm user tương ứng
     const users = await User.find({ _id: { $in: userIds } }).select("_id name").lean();
 
-    // Tạo user dictionary để tra cứu nhanh
+    // Tạo user dictionary 
     const userDict = {};
     users.forEach(user => {
       userDict[user._id] = user.name;
