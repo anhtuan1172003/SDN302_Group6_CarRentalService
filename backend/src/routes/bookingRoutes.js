@@ -6,6 +6,7 @@ const {
   getBookings,
   updateBookingStatus,
   deleteBooking,
+  completeBooking,
 } = require("../controllers/bookingController")
 const { protect, admin } = require("../middleware/auth")
 
@@ -15,6 +16,7 @@ const router = express.Router()
 router.post("/", protect, createBooking)
 router.get("/mybookings", protect, getMyBookings)
 router.get("/:id", protect, getBookingById)
+router.post("/completeBooking", protect, completeBooking)
 
 // Admin routes
 router.get("/", protect, admin, getBookings)
