@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
+import { Routes, Route } from "react-router-dom"
 import { Container } from "react-bootstrap"
 import { ToastContainer } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
@@ -7,11 +7,11 @@ import EditCarsPage from "./pages/EditCarsPage";
 // Layout Components
 import Header from "./components/layout/Header"
 import Footer from "./components/layout/Footer"
+import AdminHeader from "./components/layout/AdminHeader";
 
 // Public Pages
 import HomePage from "./pages/HomePage"
 import CarListPage from "./pages/CarListPage"
-// import CarDetailsPage from "./pages/CarDetailsPage"
 import CarDetailsPage from "./pages/CarDetailsPage_copy.js"
 import LoginPage from "./pages/LoginPage"
 import RegisterPage from "./pages/RegisterPage"
@@ -24,6 +24,7 @@ import NotFoundPage from "./pages/ErrorPage/NotFoundPage";
 import ProfilePage from "./pages/ProfilePage"
 import BookingPage from "./pages/BookingPage"
 import MyBookingsPage from "./pages/MyBookingsPage"
+import ChangePasswordPage from "./pages/ChangePasswordPage.js"
 import AddCarPage from "./pages/AddCarPage.js"
 import MyCarsPage from "./pages/MyCarsPage.js"
 
@@ -31,7 +32,7 @@ import MyCarsPage from "./pages/MyCarsPage.js"
 import AdminDashboard from "./pages/admin/DashBoard.js"
 import AdminCarsPage from "./pages/admin/CarsPage"
 import AdminBookingsPage from "./pages/admin/BookingsPage"
-import AdminUsersPage from "./pages/admin/UsersPage"
+import AdminUsersPage from "./pages/admin/AdminUsersPage.js"
 
 // Auth Components
 import PrivateRoute from "./components/auth/PrivateRoute"
@@ -40,11 +41,17 @@ import Login from "./pages/Login.js"
 import Register from "./pages/Register.js"
 import Term from "./pages/TermPage.js"
 import MyWallet from "./pages/MyWallet.js"
+import { useContext } from "react";
+import AuthContext from "./context/AuthContext";
 
 function App() {
+  const { user, isAdmin } = useContext(AuthContext);
+
   return (
     <>
-      <Header />
+      {/* Render Header based on user role */}
+      {user && isAdmin() ? <AdminHeader /> : <Header />}
+      
       <main className="py-3">
         <Container>
           <Routes>
@@ -53,16 +60,14 @@ function App() {
             <Route path="/cars" element={<CarListPage />} />
             <Route path="/car/:id" element={<CarDetailsPage />} />
             <Route path="/term" element={<Term />} />
-           
             <Route path="*" element={<NotFoundPage />} />
             <Route path="/403" element={<Forbidden />} />
-
-            {/* <Route path="/login" element={<LoginPage />} /> */}
             <Route path="/login" element={<Login/>} />
             <Route path="/register" element={<Register/>} />
             <Route path="/about" element={<AboutPage />} />
             <Route path="/contact" element={<ContactPage />} />
             <Route path="/edit-car/:id" element={<EditCarsPage />} />
+
             {/* Protected Routes */}
             <Route
               path="/profile"
@@ -93,6 +98,14 @@ function App() {
               element={
                 <PrivateRoute>
                   <AddCarPage/>
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/changepassword"  
+              element={
+                <PrivateRoute>
+                  <ChangePasswordPage/>
                 </PrivateRoute>
               }
             />

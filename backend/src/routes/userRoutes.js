@@ -1,9 +1,11 @@
+// src/routes/userRoutes.js
 const express = require("express")
 const {
   registerUser,
   loginUser,
   getUserProfile,
   updateUserProfile,
+  changeUserPassword,
   refreshToken,
   logoutUser,
   getUsers,
@@ -21,8 +23,10 @@ router.post("/login", loginUser)
 router.post("/refresh-token", refreshToken)
 
 // Protected routes
-router.get("/profile", protect, getUserProfile)
-router.put("/profile", protect, updateUserProfile)
+router.get("/profile", protect, getUserProfile) // Đã sửa getUserProfile để populate role_id
+router.put("/profile", protect, updateUserProfile) // Đã sửa updateUserProfile để populate role_id
+router.put("/change-password", protect, changeUserPassword)
+router.delete("/users/deleteaccount", protect, deleteUser)
 router.post("/logout", protect, logoutUser)
 
 // Admin routes
@@ -33,5 +37,4 @@ router.put("/:id", protect, admin, updateUser)
 
 module.exports = router
 
-console.log("User routes created successfully with CommonJS syntax!")
-
+console.log("User routes updated with change-password endpoint!")

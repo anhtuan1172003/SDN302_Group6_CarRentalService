@@ -8,6 +8,11 @@ import AuthContext from "../../context/AuthContext"
 const Header = () => {
   const { user, logout, isAdmin } = useContext(AuthContext)
 
+  // If user is admin, this header won't be used
+  if (user && isAdmin()) {
+    return null
+  }
+
   return (
     <header>
       <Navbar bg="dark" variant="dark" expand="lg" collapseOnSelect>
@@ -51,6 +56,9 @@ const Header = () => {
                     <LinkContainer to="/profile">
                       <NavDropdown.Item>Profile</NavDropdown.Item>
                     </LinkContainer>
+                    <LinkContainer to="/changepassword">
+                      <NavDropdown.Item>Change Password</NavDropdown.Item>
+                    </LinkContainer>
                     <LinkContainer to="/mybookings">
                       <NavDropdown.Item>My Bookings</NavDropdown.Item>
                     </LinkContainer>
@@ -90,4 +98,3 @@ const Header = () => {
 }
 
 export default Header
-
