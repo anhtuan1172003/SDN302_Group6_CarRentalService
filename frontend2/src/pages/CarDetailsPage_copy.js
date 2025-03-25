@@ -38,10 +38,11 @@ const CarDetailsPage = () => {
 
         try {
           const feedbackData = await getCarFeedback(id);
+          console.log(feedbackData)
           setFeedbacks(feedbackData);
         } catch (feedbackError) {
           console.error("Failed to fetch feedback:", feedbackError);
-          setFeedbacks([]); // Nếu lỗi, đặt feedback là mảng rỗng
+          setFeedbacks([]); 
         }
 
         setLoading(false);
@@ -206,7 +207,7 @@ const CarDetailsPage = () => {
             </Col>
           </Row>
 
-          {/* Feedback Card riêng biệt */}
+          {/* Feedback*/}
           <Row className="mt-4">
             <Col className="mx-auto">
               <Card className="p-4 shadow-sm">

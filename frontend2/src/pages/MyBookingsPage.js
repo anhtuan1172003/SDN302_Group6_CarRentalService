@@ -6,6 +6,7 @@ import moment from "moment"
 import { toast } from "react-toastify"
 import handleCreatePaymentVNPay from "../utils/getUrlVNPay"
 import { useLocation } from "react-router-dom"
+import FeedbackModal from "../components/FeedbackModal"
 
 export default function MyBookingsPage() {
 
@@ -13,7 +14,18 @@ export default function MyBookingsPage() {
     const [loading, setLoading] = useState(false)
     const location = useLocation()
     const queryParams = new URLSearchParams(location.search)
+    const [showFeedbackModal, setShowFeedbackModal] = useState(false)
+    const [selectedBookingId, setSelectedBookingId] = useState(null)
 
+    const openFeedbackModal = (bookingId) => {
+        setSelectedBookingId(bookingId)
+        setShowFeedbackModal(true)
+    }
+
+    const closeFeedbackModal = () => {
+        setSelectedBookingId(null)
+        setShowFeedbackModal(false)
+    }
     const getMyBooking = async () => {
         try {
             setLoading(true)
@@ -80,7 +92,8 @@ export default function MyBookingsPage() {
                                     <th>Start Date</th>
                                     <th>End Date</th>
                                     <th>Booking Status</th>
-                                    <th>Funtion</th>
+                                    <th>Payment</th>
+                                    <th>Feedback</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -109,7 +122,18 @@ export default function MyBookingsPage() {
                                                     >
                                                         Payment
                                                     </Button>
+
                                                 </td>
+                                                <td>
+                                                    <Button
+                                                        variant="success"
+                                                        onClick={() => openFeedbackModal(i._id)}
+                                                        disabled={i.booking_status !== "completed"}
+                                                    >
+                                                        Feedback
+                                                    </Button>
+                                                </td>
+
                                             </tr>
                                         )
                                         : <h4>No data</h4>
@@ -118,7 +142,15 @@ export default function MyBookingsPage() {
                         </Table>
                     </Col>
                 </Row>
+
             )}
+            <FeedbackModal
+                show={showFeedbackModal}
+                onHide={closeFeedbackModal}
+                bookingId={selectedBookingId}
+                onSuccess={getMyBooking}
+            />
+
         </div>
     )
 }
