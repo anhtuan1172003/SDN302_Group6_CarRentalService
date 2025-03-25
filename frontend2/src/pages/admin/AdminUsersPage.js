@@ -200,34 +200,67 @@ export default function AdminUsersPage() {
     setShowDeleteModal(true);
   };
 
+  // Hàm handleDetailsClick được cải thiện để xử lý lỗi và gỡ lỗi tốt hơn
   const handleDetailsClick = async (user) => {
     setLoadingDetails(true);
     setShowDetailsModal(true);
     try {
-      console.log("Fetching user details for ID:", user._id);
+      console.log("Attempting to fetch user details for ID:", user._id);
+      console.log("Auth context:", { userId: user._id, token: localStorage.getItem("token") }); // Kiểm tra token nếu có
+
       const userData = await getUserById(user._id);
-      console.log("User details from getUserById:", userData);
+      console.log("Response from getUserById:", userData);
+
+      // Kiểm tra dữ liệu trả về có hợp lệ không
+      if (!userData || (userData.message && !userData._id)) {
+        throw new Error(userData?.message || "No valid user data returned");
+      }
+
       setUserDetails(userData);
+      console.log("Successfully set user details:", userData);
       setLoadingDetails(false);
     } catch (error) {
-      console.error("Error fetching user details:", error);
+      console.error("Error fetching user details:", {
+        message: error.message,
+        response: error.response ? {
+          status: error.response.status,
+          data: error.response.data,
+          headers: error.response.headers,
+        } : "No response",
+        request: error.request ? "Request made but no response" : "No request sent",
+        stack: error.stack,
+      });
+
       let errorMessage = "Failed to load user details.";
       if (error.response) {
-        if (error.response.status === 404) {
-          errorMessage = "Error 404: User not found.";
-        } else if (error.response.status === 401) {
-          errorMessage = "Error 401: Unauthorized. Logging out...";
-          setTimeout(() => logout(), 3000);
-        } else {
-          errorMessage = `Server error: ${error.response.status} - ${
-            error.response.data?.message || "Unknown error"
-          }`;
+        const status = error.response.status;
+        switch (status) {
+          case 400:
+            errorMessage = "Error 400: Bad request. Invalid user ID.";
+            break;
+          case 401:
+            errorMessage = "Error 401: Unauthorized. Logging out...";
+            setTimeout(() => logout(), 3000);
+            break;
+          case 403:
+            errorMessage = "Error 403: Forbidden. Insufficient permissions.";
+            break;
+          case 404:
+            errorMessage = "Error 404: User not found.";
+            break;
+          case 500:
+            errorMessage = "Error 500: Internal server error. Please check server logs.";
+            break;
+          default:
+            errorMessage = `Server error ${status}: ${error.response.data?.message || "Unknown error"}`;
         }
       } else if (error.request) {
-        errorMessage = "Network error: Unable to connect to the server.";
+        errorMessage = "Network error: Server is unreachable. Please check your connection.";
       } else {
-        errorMessage = `Error: ${error.message}`;
+        errorMessage = `Unexpected error: ${error.message}`;
       }
+
+      setUserDetails(null); // Reset userDetails để hiển thị thông báo lỗi
       toast.error(errorMessage);
       setLoadingDetails(false);
     }
@@ -314,7 +347,7 @@ export default function AdminUsersPage() {
       ) : error ? (
         <Message variant="danger">
           {error}
-          <div className="mt-2">
+          <div className=" Liberator mt-2">
             <Button variant="outline-primary" onClick={isSearching ? fetchAllUsers : fetchUsers}>
               Retry
             </Button>
@@ -391,7 +424,7 @@ export default function AdminUsersPage() {
         </>
       )}
 
-      {/* User Details Modal */}
+      {/* User Details Modal - Cập nhật thông báo lỗi */}
       <Modal
         show={showDetailsModal}
         onHide={() => setShowDetailsModal(false)}
@@ -408,7 +441,7 @@ export default function AdminUsersPage() {
               <h5>User Information</h5>
               <p>
                 <strong>Name:</strong>{" "}
-                {userDetails.name || userDetails.username}
+                {userDetails.name || userDetails.username || "Not specified"}
               </p>
               <p>
                 <strong>Age:</strong>{" "}
@@ -418,7 +451,7 @@ export default function AdminUsersPage() {
                   : "Not specified"}
               </p>
               <p>
-                <strong>Email:</strong> {userDetails.email}
+                <strong>Email:</strong> {userDetails.email || "Not specified"}
               </p>
               <p>
                 <strong>Address:</strong>{" "}
@@ -432,11 +465,15 @@ export default function AdminUsersPage() {
                     <Col md={4} key={car._id} className="mb-4">
                       <Card>
                         <Card.Body>
-                          <Card.Title>{car.make} {car.model}</Card.Title>
+                          <Card.Title>
+                            {car.brand || car.make || "Unknown"} {car.model || ""}
+                          </Card.Title>
                           <Card.Text>
-                            <strong>Year:</strong> {car.year}
+                            <strong>Year:</strong>{" "}
+                            {car.production_years || car.year || "N/A"}
                             <br />
-                            <strong>Price per Day:</strong> ${car.pricePerDay}
+                            <strong>Price per Day:</strong> $
+                            {car.base_price || car.pricePerDay || "N/A"}
                           </Card.Text>
                           <Button
                             variant="info"
@@ -458,7 +495,16 @@ export default function AdminUsersPage() {
             </>
           ) : (
             <Message variant="danger">
-              Failed to load user details.
+              Failed to load user details. This may be due to a server error. Please try again or check server logs for more details.
+              <div className="mt-2">
+                <Button
+                  variant="outline-primary"
+                  size="sm"
+                  onClick={() => handleDetailsClick(selectedUser || { _id: userDetails?._id })}
+                >
+                  Retry
+                </Button>
+              </div>
             </Message>
           )}
         </Modal.Body>

@@ -348,7 +348,7 @@ const getUserById = async (req, res) => {
 
     if (user) {
       // Lấy danh sách xe mà người dùng đã đăng
-      const cars = await Car.find({ owner: user._id });
+      const cars = await Car.find({ user_id: user._id }); // Sửa 'owner' thành 'user_id' để khớp với schema
 
       res.json({
         _id: user._id,
@@ -357,10 +357,10 @@ const getUserById = async (req, res) => {
         role_id: user.role_id || null,
         address: user.address,
         phone_no: user.phone_no,
-        date_of_birth: user.date_of_birth,
+        dategins_of_birth: user.date_of_birth,
         driving_license: user.driving_license,
         national_id_no: user.national_id_no,
-        cars, // Thêm danh sách xe
+        cars, // Danh sách xe
       });
     } else {
       res.status(404).json({ message: "User not found" });
