@@ -11,7 +11,7 @@ function CarDetails() {
   useEffect(() => {
     const fetchCar = async () => {
       try {
-        const res = await axios.get(`http://localhost:8386/api/cars/${id}`)
+        const res = await axios.get(`http://cc210d749504.sn.mynetname.net:8386/api/cars/${id}`)
         setCar(res.data)
       } catch (error) {
         console.error("Error fetching car details:", error)

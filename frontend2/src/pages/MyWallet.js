@@ -13,7 +13,7 @@ function MyWallet() {
   useEffect(() => {
     // Lấy dữ liệu số dư ví
     axios
-      .get("http://localhost:8386/users/profile")
+      .get("http://cc210d749504.sn.mynetname.net:8386/users/profile")
       .then((response) => {
         setWallet(response.data.wallet);
       })
@@ -23,7 +23,7 @@ function MyWallet() {
 
     // Lấy dữ liệu giao dịch
     axios
-      .get("http://localhost:8386/transactions/mytransactions")
+      .get("http://cc210d749504.sn.mynetname.net:8386/transactions/mytransactions")
       .then((response) => {
         setTransactions(response.data);
       })

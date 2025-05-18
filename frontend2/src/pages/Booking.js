@@ -13,7 +13,7 @@ function Booking() {
   const handleSubmit = async (e) => {
     e.preventDefault()
     try {
-      await axios.post("http://localhost:8386/api/bookings", {
+      await axios.post("http://cc210d749504.sn.mynetname.net:8386/api/bookings", {
         car_id: carId,
         start_date_time: startDate,
         end_date_time: endDate,

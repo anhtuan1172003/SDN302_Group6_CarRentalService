@@ -10,7 +10,7 @@ function CarList() {
   useEffect(() => {
     const fetchCars = async () => {
       try {
-        const res = await axios.get("http://localhost:8386/api/cars")
+        const res = await axios.get("http://cc210d749504.sn.mynetname.net:8386/api/cars")
         setCars(res.data)
       } catch (error) {
         console.error("Error fetching cars:", error)

@@ -76,7 +76,7 @@ function AddCarPage() {
 
     try {
       const token = localStorage.getItem("token"); // Lấy token từ localStorage
-      const response = await fetch("http://localhost:8386/cars/", {
+      const response = await fetch("http://cc210d749504.sn.mynetname.net:8386/cars/", {
         method: "POST",
         headers: {
           "Authorization": `Bearer ${token}`, // Thêm token vào tiêu đề

@@ -14,7 +14,7 @@ function Register() {
   const handleSubmit = async (e) => {
     e.preventDefault()
     try {
-      await axios.post("http://localhost:8386/users", { name, email, password })
+      await axios.post("http://cc210d749504.sn.mynetname.net:8386/users", { name, email, password })
       alert("Registration successful! Please login.")
       navigate("/login")
     } catch (error) {

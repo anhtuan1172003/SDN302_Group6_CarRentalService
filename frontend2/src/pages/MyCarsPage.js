@@ -22,7 +22,7 @@ const MyCarsPage = () => {
 
       try {
         console.log("Đang lấy danh sách xe cho user:", userId);
-        const response = await axios.get(`http://localhost:8386/cars/owner/${userId}`);
+        const response = await axios.get(`http://cc210d749504.sn.mynetname.net:8386/cars/owner/${userId}`);
         console.log("Dữ liệu xe:", response.data);
 
         if (Array.isArray(response.data)) {

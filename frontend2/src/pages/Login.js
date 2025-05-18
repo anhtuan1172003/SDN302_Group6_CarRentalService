@@ -12,7 +12,7 @@ function Login() {
   // const handleSubmit = async (e) => {
   //   e.preventDefault()
   //   try {
-  //     const res = await axios.post("http://localhost:8386/api/users/login", { email, password })
+  //     const res = await axios.post("http://cc210d749504.sn.mynetname.net:8386/api/users/login", { email, password })
   //     localStorage.setItem("token", res.data.token)
   //     history.push("/")
   //   } catch (error) {
@@ -25,7 +25,7 @@ function Login() {
     e.preventDefault();
     console.log("Form submitted"); // Kiểm tra xem hàm có được gọi không
     try {
-        const res = await axios.post("http://localhost:8386/users/login", { email, password });
+        const res = await axios.post("http://cc210d749504.sn.mynetname.net:8386/users/login", { email, password });
         console.log(res); // Kiểm tra phản hồi từ API
         if (res.data.token) {
           console.log("User ID from API:", res.data._id); // Kiểm tra _id từ API

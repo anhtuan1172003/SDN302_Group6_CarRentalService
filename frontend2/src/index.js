@@ -8,7 +8,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { BrowserRouter } from "react-router-dom";
 
 // Set base URL for API requests
-axios.defaults.baseURL = "http://localhost:8386"
+axios.defaults.baseURL = "http://cc210d749504.sn.mynetname.net:8386"
 
 const root = ReactDOM.createRoot(document.getElementById("root"))
 root.render(

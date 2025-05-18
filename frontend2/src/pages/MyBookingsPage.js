@@ -103,7 +103,7 @@ export default function MyBookingsPage() {
                                                             handleCreatePaymentVNPay(
                                                                 "Thanh toán booking",
                                                                 i?.total_amount * 100 * 23000,
-                                                                `http://localhost:3000${location.pathname}`
+                                                                `http://cc210d749504.sn.mynetname.net:3000${location.pathname}`
                                                             )
                                                         }}
                                                     >
