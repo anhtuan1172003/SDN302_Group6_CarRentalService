@@ -8,6 +8,11 @@ const connectDB = async () => {
       useNewUrlParser: true,
       useUnifiedTopology: true
     });
+  //   await mongoose.connect(process.env.MONGO_URI3, {
+  //     dbName: "SDN302_CarRentalService",
+  //   useNewUrlParser: true,
+  //   useUnifiedTopology: true
+  // });
     console.log('MongoDB connected');
   } catch (err) {
     console.error('MongoDB connection error:', err);

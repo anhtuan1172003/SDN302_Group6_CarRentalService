@@ -1,6 +1,7 @@
 const express=require('express');
 const {connect}= require('mongoose');
 const router=require('./src/routes/index.js');
+const mongoose = require('mongoose');
 const dotenv= require('dotenv');
 var cors = require('cors');
 const bodyParser = require('body-parser');
@@ -10,8 +11,10 @@ dotenv.config();
 app.use(cors());
 
 const PORT=process.env.PORT;
-const MONGODB_URI=process.env.MONGODB_URI;
-connect(MONGODB_URI);
+
+mongoose.connect(process.env.MONGO_URI3, { useNewUrlParser: true, dbName:"SDN302_CarRentalService",  useUnifiedTopology: true })
+  .then(() => console.log('MongoDB connected'))
+  .catch(err => console.error('MongoDB connection error:', err));
 
 
 // For parsing application/json
